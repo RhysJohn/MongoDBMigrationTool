@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 using MongoDbMigrationTool.Models.Enums;
 
 namespace MongoDbMigrationTool.Models
@@ -20,7 +21,7 @@ namespace MongoDbMigrationTool.Models
         /// <summary>
         /// Gets or sets ...
         /// </summary>
-        public IEnumerable<(ArgumentType, string)> Arguments { get; set; }
+        public ICollection<(ArgumentType, string)> Arguments { get; set; } = new List<(ArgumentType, string)>();
 
         /// <summary>
         /// Checks the amount of arguments passed in is correct to the operation they are trying to perform.
@@ -38,6 +39,28 @@ namespace MongoDbMigrationTool.Models
 
             return false;
              throw new Exception("Invalid count of operations supplied.");
+        }
+        
+        protected Type GetCurrentMongoDbContext(string repoAssembly)
+        {
+            var assembly = Assembly.Load(repoAssembly);
+
+            var instances = assembly
+                .GetTypes()
+                .Where(t => t.GetInterfaces().Contains(typeof(IMongoDbContextMigrations)));
+
+            if (instances.Count() == 1)
+            {
+                return instances.Single();
+            }
+
+            // foreach (var instance in instances)
+            // {
+            //     instance.GetProperties().Where(prop => prop.GetType() == );
+            // }
+            //
+            // //if you want the abstract classes drop the !TheType.IsAbstract but it is probably to instance so its a good idea to keep it.
+            // return Assembly.GetAssembly(MyType).GetTypes().Where(TheType => TheType.IsClass && !TheType.IsAbstract && TheType.IsSubclassOf(MyType));
         }
     }
 }

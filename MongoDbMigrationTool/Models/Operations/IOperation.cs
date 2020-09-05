@@ -5,7 +5,7 @@ namespace MongoDbMigrationTool.Models
 {
     public interface IOperation
     {
-        IEnumerable<(ArgumentType, string)> ParseArguments(IEnumerable<(string, string)> argumentTokens);
+        void ParseArguments(IEnumerable<string> argumentTokens);
 
         bool Perform();
     }
